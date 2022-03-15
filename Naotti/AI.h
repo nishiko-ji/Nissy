@@ -1,3 +1,4 @@
+#pragma once
 #include "Game.h"
 #include "Search.h"
 #include <vector>

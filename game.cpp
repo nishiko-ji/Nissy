@@ -39,29 +39,19 @@ namespace game
         return "SET:" + redName;
     }
 
-    // void test1(UCT& Tree){
-    //     Tree.Search();
-    // }
-
     void uct(UCT& Tree){
-        // for (int i = 0; i < 5; i++) {
-        //     std::cout << __PRETTY_FUNCTION__ << std::endl;
-        //     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        // }
-        std::cout << "-----Start UCT Search-----\n" << std::endl;
+        std::cout << "-----Start UCT Search-----" << std::endl;
         Tree.Search();         //探索
-        std::cout << "-----Finish UCT Search-----\n" << std::endl;
+        std::cout << "-----Finish UCT Search-----" << std::endl;
         Tree.PrintStatus();
+        std::cout << "---------------------------" << std::endl;
     }
     void minmax(pair<string, int>& mv, string recieve, int turn) {
-        // for (int i = 0; i < 9; i++) {
-        //     std::cout << __PRETTY_FUNCTION__ << std::endl;
-        //     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        // }
-        std::cout << "-----Start 紫駒 Search-----\n" << std::endl;
+        std::cout << "-----Start 紫駒 Search-----" << std::endl;
         mv = tsumi(recieve, turn);
-        std::cout << "-----Finish 紫駒 Search-----\n" << std::endl;
+        std::cout << "-----Finish 紫駒 Search-----" << std::endl;
         std::cout << mv.first << ", " << mv.second << std::endl; 
+        std::cout << "----------------------------" << std::endl;
     }
     // ゲームを行う
     int playgame(int port, string destination)
@@ -111,13 +101,13 @@ namespace game
             // Tree.PrintStatus();
             if(mv.second > 10000000){
                 send = mv.first;
-                cout << "紫駒だよお" << endl;
+                cout << "SELECT : 紫駒" << endl;
                 cout << send << endl;
             }else{
                 NodeNum move = Tree.Choice(); //探索結果に合わせてrootからノードを選択
                 log.writeLog(Tree.getStatus(move));
                 send = Tree.MoveNode(move); //選択したノードに遷移し、サーバーに送る文字列を受け取る
-                cout << "UCTだよお" << endl;
+                cout << "SELECT : UCT" << endl;
                 cout << send << endl;
             }
             client.Send(send); //サーバーに文字列を送る
