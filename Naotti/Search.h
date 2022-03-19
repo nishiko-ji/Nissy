@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <iostream>
+#include <time.h>
 #include "BitBoard.h"
 #include "Game.h"
 using namespace std;
@@ -62,17 +63,32 @@ public:
 		if (escapeTe.y >= 0)
 			return pair<MoveCommandN, int>(escapeTe, INF);
 
+		// 時間を取得してnegamaxの引数に与える
+		time_t st = time(NULL);
+
 		//相手の駒を紫駒とした完全情報探索 (深さ0探索時に最善手を格納）
-		int eval = negamax(bb, 0, -INF - 1, INF + 1);
-		return pair<MoveCommandN, int>(bestMove, eval);
+		int eval = negamax(bb, 0, -INF - 1, INF + 1, st, 8);
+		// int eval = negamax(bb, 0, -INF - 1, INF + 1);
+		// return pair<MoveCommandN, int>(bestMove, eval);
+		if (eval == 0)
+		{
+			// printf("深さ %d 読みきれなかった。。。\n", maxDepth);
+			return pair<MoveCommandN, int>(noMove, eval);
+		}
+		else
+		{
+			return pair<MoveCommandN, int>(bestMove, eval);
+		}
 	}
 
 private:
 	int pnum;							 //紫駒がpnum個以下になったら敵の勝ち
 	MoveCommandN bestMove; //深さ0（R,Bを動かす手番）における最良手
+	MoveCommandN noMove;
 
 	//探索部分 (自分必勝：INF, 自分必負-INF), 戻り値が(alpha, beta)の範囲を超えたら適当に返す
-	int negamax(BitBoardN bb, int depth, int alpha, int beta)
+	int negamax(BitBoardN bb, int depth, int alpha, int beta, time_t st, int endtime)
+	// int negamax(BitBoardN bb, int depth, int alpha, int beta)
 	{
 		int player = depth % 2;
 		int winPlayer = bb.getWinPlayer(player, pnum);
@@ -81,6 +97,14 @@ private:
 		if (depth == maxDepth)
 			return bb.evaluate(player);
 
+		//時間を取得して引数の時間と比較、9秒経ってたらreturn " ", 0 を返す
+		if (time(NULL) - st > endtime)
+		{
+			// printf("time : %f\n", time(NULL) - st);
+			// printf("終了しなかったよ\n");
+			return 0;
+		}
+
 		int from[32], to[32];
 		int moveNum = bb.makeMoves(player, kiki, from, to);
 
@@ -88,7 +112,8 @@ private:
 		{
 			BitBoardN bbTmp = bb;
 			bb.move(from[i], to[i]);
-			int res = -negamax(bb, depth + 1, -beta, -alpha);
+			int res = -negamax(bb, depth + 1, -beta, -alpha, st, 8);
+			// int res = -negamax(bb, depth + 1, -beta, -alpha);
 			if (alpha < res)
 			{
 				alpha = res;

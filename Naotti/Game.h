@@ -49,58 +49,6 @@ namespace Game_
 		return 0;
 	}
 
-	//終了の原因
-	string getEndInfo(string recv_msg)
-	{
-		if (startWith(recv_msg, "DRW"))
-			return "draw";
-
-		int i, Rnum = 0, Bnum = 0, rnum = 0, bnum = 0;
-		const int baius = 4;
-
-		for (i = 0; i < 16; i++)
-		{
-			int x = recv_msg[baius + 3 * i] - '0';
-			int y = recv_msg[baius + 3 * i + 1] - '0';
-			char type = recv_msg[baius + 3 * i + 2];
-
-			if (0 <= x && x < 6 && 0 <= y && y < 6)
-			{
-				if (type == 'R')
-					Rnum++;
-				if (type == 'B')
-					Bnum++;
-				if (type == 'r')
-					rnum++;
-				if (type == 'b')
-					bnum++;
-			}
-		}
-
-		if (startWith(recv_msg, "WON"))
-		{
-			if (Rnum == 0)
-			{
-				return "won taken R";
-			}
-			if (bnum == 0)
-			{
-				return "won taked b";
-			}
-			return "won escaped B";
-		}
-
-		if (rnum == 0)
-		{
-			return "lost taked r";
-		}
-		if (Bnum == 0)
-		{
-			return "lost taken B";
-		}
-		return "lost escaped b";
-	}
-
 	//ボードの受信
 	void recvBoard(string msg)
 	{
@@ -159,6 +107,10 @@ namespace Game_
 		ret += "MOV:";
 		ret += komaName[y][x];
 		ret += ",";
+		if (moveStr.find(moveStr[dir]) == string::npos)
+		{
+			return "NAN";
+		}
 		ret += moveStr[dir];
 		return ret;
 	}

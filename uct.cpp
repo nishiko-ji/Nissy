@@ -553,10 +553,12 @@ void UCT::Search()
 
 	assert(Nodes[playnodenum].board.willplayer == nowPlayer);
 
-	clock_t start_time = clock();
+	// clock_t start_time = clock();
+	time_t start_time = time(NULL);
 	int i = 0;
 	// while (i < 30000) // UCTのループ
-	while (clock() - start_time < 9.0 * CLOCKS_PER_SEC) // UCTのループ
+	// while (clock() - start_time < 9.0 * CLOCKS_PER_SEC) // UCTのループ
+	while (time(NULL) - start_time < 8.0) // UCTのループ
 	{
 		while (!Nodes[search_node].nextnodes.empty()) //木の端まで見る
 		{
